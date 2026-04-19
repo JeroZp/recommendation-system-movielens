@@ -1,0 +1,15 @@
+# Entorno virtual
+venv/
+
+# Datos pesados
+data/raw/*.zip
+data/raw/ml-100k/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db
