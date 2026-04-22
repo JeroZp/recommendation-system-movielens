@@ -9,7 +9,13 @@
 ## ❓ Pregunta central
 ¿Es posible predecir el rating que un usuario le daría a una película que no ha visto?
 
----
+## Stack tecnológico
+
+- **Python** 3.8+
+- **Data manipulation:** pandas, numpy
+- **ML:** scikit-learn (métricas, baseline, cross-validation)
+- **Visualization:** matplotlib, seaborn
+- **Reproducible:** Jupyter Notebook
 
 ## 📁 Estructura del repositorio
 
@@ -18,11 +24,15 @@ recommendation-system-movielens/
 │
 ├── data/
 │   ├── raw/          # Datos originales sin modificar
-│   └── processed/    # Datos limpios y transformados
+│   ├── processed/    # Datos limpios y transformados
+│   └── README.md     # Data Card con detalles del dataset
 │
 ├── notebooks/        # Jupyter Notebooks del proyecto
+│   └── 01_eda_baseline.ipynb    # Análisis reproducible, 1ra entrega
 ├── figures/          # Gráficas exportadas
 ├── report/           # Reporte PDF
+│   ├── 01_report_delivery_1.md  # Reporte editable, 1ra entrega 
+│   └── 01_report_delivery_1.pdf # Reporte definitivo, 1ra entrega 
 ├── poster/           # Póster visual
 ├── src/              # Módulos Python (opcional)
 │
