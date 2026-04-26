@@ -5,6 +5,7 @@
 **Institución:** EAFIT  
 **Curso:** Aprendizaje de Máquina Aplicado  
 **Profesor:** Marco Teran  
+**Fecha límite:** 26/04/2026  
 **Dataset:** MovieLens 100K — GroupLens Research
 **Integrantes:** 
   - Jerónimo Pérez Baquero (jperezb5@eafit.edu.co)
@@ -289,7 +290,7 @@ $$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
 
 > Predecir el rating promedio global del dataset ($\bar{y}$) para **todas** las observaciones, sin considerar características de usuario ni película.
 
-$$\hat{y}_i = \bar{y} = 3.53 \quad \forall i$$
+$$\hat{y}_i = \bar{y} = 3.5313 \quad \forall i$$
 
 **Justificación de por qué este baseline:**
 
@@ -307,29 +308,64 @@ Evaluado en test set (split 80–20):
 
 | Métrica | Valor | Interpretación |
 |---------|-------|---|
-| **RMSE** | 1.125 | Error promedio: ±1.12 estrellas |
-| **MAE** | 0.901 | Error típico: ±0.90 estrellas |
+| **RMSE** | 1.1239 | Error promedio: ±1.12 estrellas |
+| **MAE** | 0.9420 | Error típico: ±0.94 estrellas |
 
 **Detalles del cálculo:**
 
 ```
 Test set: 20,000 observaciones (random split)
-Todas predicciones: 3.53
-Varianza real: σ² = 1.13² = 1.277
-Desviación observada vs. predicción: std(y - ŷ) = 1.125 = RMSE
+Todas predicciones: 3.5313
+Varianza real: σ² = 1.12² = 1.254
+Desviación observada vs. predicción: std(y - ŷ) = 1.1239 = RMSE
 ```
 
 **Análisis de interpretabilidad:**
 
 - Rango teórico de la escala: 1–5 = 4 unidades
-- RMSE del baseline: 1.125 = **28% del rango** → error no trivial
-- MAE del baseline: 0.901 = **22.5% del rango**
+- RMSE del baseline: 1.1239 = **28% del rango** → error no trivial
+- MAE del baseline: 0.9420 = **24% del rango**
 
 **¿Qué significa esto?**
 
-- Un modelo que siempre predice "3.5 estrellas" comete error medio de ~0.9 estrellas
-- Si el usuario realmente quiso calificar 4.5, el modelo dijo 3.5 → error de 1 estrella
-- Si el usuario realmente quiso calificar 2.5, el modelo dijo 3.5 → error de 1 estrella también
+- Un modelo que siempre predice "3.53 estrellas" comete error medio de ~0.94 estrellas
+- Si el usuario realmente quiso calificar 4.5, el modelo dijo 3.53 → error de ~0.97 estrellas
+- Si el usuario realmente quiso calificar 2.5, el modelo dijo 3.53 → error de ~1.03 estrellas también
+
+---
+
+### 5.2.1 Interpretación detallada del baseline
+
+**RMSE = 1.1239:** 
+
+En promedio, las predicciones del baseline se desvían del rating real en ±1.12 puntos en la escala 1–5. 
+
+Esto significa que:
+- Si el usuario califica una película con 4 estrellas, el baseline (que siempre predice 3.5313) errará en aproximadamente 1.12 puntos de media
+- Un error de 1.12 estrellas representa el **28% del rango total** (1–5), lo que no es trivial
+- El modelo subestima películas bien valoradas (>4 estrellas) y sobrestima películas mal valoradas (<3 estrellas)
+
+**MAE = 0.9420:** 
+
+El error promedio sin considerar dirección es de 0.94 puntos — esta métrica es más interpretable para usuarios finales.
+
+Esto significa que:
+- En promedio, el modelo se equivoca en casi una estrella completa
+- Representa el **24% del rango total**, indicando que hay señal explotable
+- El hecho de que MAE (0.94) sea menor que RMSE (1.12) sugiere que no hay predicciones extremadamente erróneas (e.g., predecir 1 cuando es 5)
+- La mayoría de errores se concentran en una banda moderada alrededor del 3.53
+
+**Conclusión de la evaluación baseline:**
+
+El baseline captura ~22% de la varianza total del dataset mediante una única estadística (la media). Este resultado establece un punto de referencia claro: **cualquier modelo entrenado debe mejorar RMSE a <1.12 y MAE a <0.94 para justificar su complejidad**. 
+
+En la Entrega 2, esperamos que modelos sofisticados como:
+- **User-based Collaborative Filtering:** Captura similitudes entre usuarios
+- **Item-based Collaborative Filtering:** Captura similitudes entre películas  
+- **Matrix Factorization (SVD, NMF):** Aprende factores latentes
+- **Hybrid approaches:** Combina contenido + colaborativo
+
+reduzcan significativamente estos errores explotando patrones específicos de usuarios y películas que el baseline ignora.
 
 ---
 
