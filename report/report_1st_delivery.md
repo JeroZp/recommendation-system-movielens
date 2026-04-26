@@ -14,6 +14,54 @@
 
 ---
 
+## Tabla de Contenidos
+
+- [Sistema de Recomendación con MovieLens 100K](#sistema-de-recomendación-con-movielens-100k)
+  - [Entrega 1 — Problema, Datos, EDA y Baseline](#entrega-1--problema-datos-eda-y-baseline)
+  - [Tabla de Contenidos](#tabla-de-contenidos)
+  - [1. ¿Qué problema intenta resolver?](#1-qué-problema-intenta-resolver)
+    - [Pregunta central](#pregunta-central)
+    - [Definición formal del problema](#definición-formal-del-problema)
+    - [Motivación y relevancia práctica](#motivación-y-relevancia-práctica)
+  - [2. ¿Por qué MovieLens 100K es el dataset adecuado?](#2-por-qué-movielens-100k-es-el-dataset-adecuado)
+    - [Tabla comparativa: Características del dataset](#tabla-comparativa-características-del-dataset)
+    - [Cómo cumple los requisitos de la entrega](#cómo-cumple-los-requisitos-de-la-entrega)
+  - [3. Análisis Exploratorio de Datos (EDA)](#3-análisis-exploratorio-de-datos-eda)
+    - [3.1 Calidad y limpieza de datos](#31-calidad-y-limpieza-de-datos)
+      - [Hallazgos de calidad](#hallazgos-de-calidad)
+    - [3.2 Distribución de la variable objetivo (ratings)](#32-distribución-de-la-variable-objetivo-ratings)
+    - [3.3 Sparsity y distribución de interacciones (cola larga)](#33-sparsity-y-distribución-de-interacciones-cola-larga)
+    - [3.4 Demografía de usuarios](#34-demografía-de-usuarios)
+    - [3.5 Preferencias por género de película y año de lanzamiento](#35-preferencias-por-género-de-película-y-año-de-lanzamiento)
+      - [3.5.1 Sesgo temporal](#351-sesgo-temporal)
+    - [3.6 Distribución de Ratings](#36-distribución-de-ratings)
+    - [3.7 Sparsity y Distribución de Interacciones](#37-sparsity-y-distribución-de-interacciones)
+    - [3.8 Demografía de Usuarios](#38-demografía-de-usuarios)
+    - [3.9 Top 10 Movies by Number of Ratings](#39-top-10-movies-by-number-of-ratings)
+    - [3.10 Top 10 Highest Rated Movies](#310-top-10-highest-rated-movies)
+  - [4. ¿Qué métrica es razonable y por qué?](#4-qué-métrica-es-razonable-y-por-qué)
+    - [Métrica 1: Root Mean Squared Error (RMSE)](#métrica-1-root-mean-squared-error-rmse)
+    - [Métrica 2: Mean Absolute Error (MAE)](#métrica-2-mean-absolute-error-mae)
+    - [Por qué ambas en conjunto](#por-qué-ambas-en-conjunto)
+  - [5. Baseline: Definición, performance y dificultad del problema](#5-baseline-definición-performance-y-dificultad-del-problema)
+    - [5.1 Definición del baseline](#51-definición-del-baseline)
+    - [5.2 Performance del baseline](#52-performance-del-baseline)
+    - [5.2.1 Interpretación detallada del baseline](#521-interpretación-detallada-del-baseline)
+    - [5.3 Análisis de dificultad del problema](#53-análisis-de-dificultad-del-problema)
+      - [Factores que lo hacen desafiante](#factores-que-lo-hacen-desafiante)
+      - [Factores que lo hacen tractable](#factores-que-lo-hacen-tractable)
+    - [5.4 Conclusión: ¿Qué tan difícil es el problema?](#54-conclusión-qué-tan-difícil-es-el-problema)
+  - [6. Síntesis final y primeras conclusiones](#6-síntesis-final-y-primeras-conclusiones)
+    - [Resumen por pregunta de la rúbrica](#resumen-por-pregunta-de-la-rúbrica)
+      - [1. ¿Qué problema intenta resolver?](#1-qué-problema-intenta-resolver-1)
+      - [2. ¿Por qué este dataset es adecuado?](#2-por-qué-este-dataset-es-adecuado)
+      - [3. ¿Qué métrica es razonable y por qué?](#3-qué-métrica-es-razonable-y-por-qué)
+      - [4. ¿Cuál es el baseline y qué tan difícil parece el problema?](#4-cuál-es-el-baseline-y-qué-tan-difícil-parece-el-problema)
+    - [Estructura clara en los datos (hallazgos EDA)](#estructura-clara-en-los-datos-hallazgos-eda)
+    - [Riesgos identificados (con mitigación)](#riesgos-identificados-con-mitigación)
+
+---
+
 ## 1. ¿Qué problema intenta resolver?
 
 ### Pregunta central
@@ -210,11 +258,19 @@ Géneros peor valorados:
 - Horror: 3.23 estrellas
 - Thriller: 3.34 estrellas
 
-**Sesgo temporal:**
+![Distribución y rating por género](../figures/07_genre_movie_distribution.png)
+
+**Interpretación:** Se observa una clara desproporción entre géneros — Drama y Comedia dominan en cantidad de películas, mientras que géneros como Film-Noir o Western son minoritarios. Sin embargo, los géneros mejor valorados no necesariamente son los más frecuentes: Film-Noir y War tienen los promedios más altos pese a tener menor representación. Esto sugiere que el modelo puede beneficiarse de aprender patrones diferenciados por género, ya que existe señal estructural en los ratings.
+
+#### 3.5.1 Sesgo temporal
 
 $$\text{Cobertura de años: } 1926 - 1998 \text{ (72 años)}$$
 
 Pero **89% de películas** están entre **1994–1998** — solo 5 años recientes
+
+![Número de películas por año](../figures/06_movies_by_year.png)
+
+**Interpretación:** La distribución confirma un sesgo temporal extremo: la gran mayoría de películas se concentran en los años 90, especialmente entre 1994 y 1998. Antes de 1980 la presencia es casi marginal. Esto implica que el modelo aprenderá principalmente patrones de cine reciente, lo que limita su capacidad de generalización hacia películas antiguas o futuras.
 
 Distribución:
 - Pre-1980: ~2%
@@ -376,6 +432,10 @@ Desviación observada vs. predicción: std(y - ŷ) = 1.1239 = RMSE
 
 ### 5.2.1 Interpretación detallada del baseline
 
+![Evaluación del baseline](../figures/08_baseline_evaluation.png)
+
+**Interpretación:** La distribución muestra cómo el baseline (media global) no logra capturar la variabilidad real de los ratings, concentrando todas las predicciones en un único valor. El histograma de errores evidencia que estos se distribuyen alrededor de cero (media cercana a 0), pero con una dispersión considerable, lo que confirma que el modelo no está capturando patrones específicos de usuarios o películas.
+
 **RMSE = 1.1239:** 
 
 En promedio, las predicciones del baseline se desvían del rating real en ±1.12 puntos en la escala 1–5. 
@@ -383,7 +443,7 @@ En promedio, las predicciones del baseline se desvían del rating real en ±1.12
 Esto significa que:
 - Si el usuario califica una película con 4 estrellas, el baseline (que siempre predice 3.5313) errará en aproximadamente 1.12 puntos de media
 - Un error de 1.12 estrellas representa el **28% del rango total** (1–5), lo que no es trivial
-- El modelo subestima películas bien valoradas (>4 estrellas) y sobrestima películas mal valoradas (<3 estrellas)
+- El modelo subestima películas bien valoradas (> 4 estrellas) y sobrestima películas mal valoradas (< 3 estrellas)
 
 **MAE = 0.9420:** 
 
