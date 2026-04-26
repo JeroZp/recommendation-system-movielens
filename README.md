@@ -23,19 +23,18 @@
 recommendation-system-movielens/
 │
 ├── data/
-│   ├── raw/          # Datos originales sin modificar
-│   ├── processed/    # Datos limpios y transformados
-│   └── README.md     # Data Card con detalles del dataset
-│
-├── notebooks/        # Jupyter Notebooks del proyecto
-│   └── 01_eda_baseline.ipynb    # Análisis reproducible, 1ra entrega
-├── figures/          # Gráficas exportadas
-├── report/           # Reporte PDF
-│   ├── 01_report_delivery_1.md  # Reporte editable, 1ra entrega 
-│   └── 01_report_delivery_1.pdf # Reporte definitivo, 1ra entrega 
-├── poster/           # Póster visual
-├── src/              # Módulos Python (opcional)
-│
+│     ├── raw/            # Datos originales sin modificar
+│     ├── processed/      # Datos limpios y transformados
+│     └── README.md       # Data Card con detalles del dataset
+├── entregas/             # Conjuntos de archivos finales para cada entrega (duplicados)
+├── figures/              # Gráficas exportadas
+├── notebooks/            # Jupyter Notebooks del proyecto, análisis reproducibles
+│     └── 01_eda_baseline.ipynb
+├── poster/               # Póster visual
+├── report/               # Reportes editables (.md) y definitivos (.pdf)
+│     ├── 01_report_delivery_1.md
+│     └── 01_report_delivery_1.pdf
+├── src/                  # Módulos Python (opcional)
 ├── requirements.txt
 └── README.md
 ```
