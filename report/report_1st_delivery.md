@@ -231,6 +231,46 @@ Distribución:
 
 ---
 
+### 3.6 Distribución de Ratings
+
+![Distribución de Ratings](../figures/01_rating_distribution.png)
+
+**Interpretación:** Los ratings muestran sesgo de positividad — la media (~3.5) está por encima del punto medio de la escala (3.0). Ratings 3 y 4 concentran la mayoría de las interacciones. Esto implica que un baseline de media global ya captura parte del patrón.
+
+---
+
+### 3.7 Sparsity y Distribución de Interacciones
+
+![Distribución de Actividad](../figures/02_activity_distribution.png)
+
+**Interpretación:** La matriz usuario–película tiene una sparsity del 93.70% — solo 100,000 de 1,586,126 combinaciones posibles tienen rating. Ambas distribuciones muestran cola larga: pocos usuarios y pocas películas concentran la mayoría de interacciones. Esto introduce el problema de **cold start**: el modelo tendrá menor precisión para usuarios con pocas calificaciones y películas poco vistas.
+
+---
+
+### 3.8 Demografía de Usuarios
+
+![Demografía de Usuarios](../figures/03_user_demographics.png)
+
+**Interpretación:** El perfil demográfico muestra sesgo significativo — aproximadamente 3 de cada 4 usuarios son hombres, la ocupación más frecuente es estudiante, y aunque el rango de edad es amplio (7–73 años), la mediana es 31. La media (34.1) está jalada por usuarios mayores. El modelo aprenderá principalmente de las preferencias de hombres jóvenes, lo que limita su generalización a otros perfiles demográficos.
+
+---
+
+### 3.9 Top 10 Movies by Number of Ratings
+
+![Top 10 Movies](../figures/04_top_10_movies.png)
+
+**Interpretación:** el dataset refleja una preferencia generacional: la mayoría de los ratings se concentran en estrenos de los años 90. Dado que el perfil predominante es el de estudiantes jóvenes, existe una correlación clara entre la juventud del público y el consumo de cine reciente. Esto demuestra que, para este grupo, la relevancia de una película está fuertemente ligada a su fecha de lanzamiento.
+
+---
+
+### 3.10 Top 10 Highest Rated Movies
+
+![Top 10 Highest Rated Movies](../figures/05_top_10_rated_movies.png)
+
+**Interpretación:** existe una distinción clara entre lo que es tendencia y lo que es aclamado. Aunque los usuarios muestran una inclinación natural hacia el cine reciente, los datos confirman que la calidad no tiene fecha de caducidad. Películas con menor frecuencia de voto, pero mayor antigüedad, mantienen promedios superiores, lo que sugiere que el público sigue otorgando un valor especial a los clásicos que han logrado trascender su época.
+
+---
+
 ## 4. ¿Qué métrica es razonable y por qué?
 
 ### Métrica 1: Root Mean Squared Error (RMSE)
