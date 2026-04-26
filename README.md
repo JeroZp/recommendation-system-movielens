@@ -25,7 +25,7 @@ recommendation-system-movielens/
 ├── data/
 │     ├── raw/            # Datos originales sin modificar
 │     ├── processed/      # Datos limpios y transformados
-│     └── README.md       # Data Card con detalles del dataset
+│     └── DATA_CARD.md       # Data Card con detalles del dataset
 ├── entregas/             # Conjuntos de archivos finales para cada entrega (duplicados)
 ├── figures/              # Gráficas exportadas
 ├── notebooks/            # Jupyter Notebooks del proyecto, análisis reproducibles
