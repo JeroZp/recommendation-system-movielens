@@ -1,6 +1,6 @@
 # Sistema de Recomendación con MovieLens 100K
 
-## Entrega 1 — Comparación de Familias y Validación
+## Entrega 2 — Comparación de Familias y Validación
 
 **Institución:** EAFIT  
 **Curso:** Aprendizaje de Máquina Aplicado  
@@ -20,7 +20,16 @@
 
 ## (draft, borrar esto) Contenidos Mínimos
 
-Metodología, configuración experimental, resultados comparativos, discusión técnica y decisión provisional.
+Jupyter Notebook: pipelines de entrenamiento y evaluación para al menos 2 o 3 familias de modelos.
+
+Validación: división correcta de datos y validación adecuada al tipo de problema (holdout, validación cruzada, validación temporal, etc.).
+
+Análisis: Comparación de métricas, análisis de errores, desbalance, selección de features, reducción de dimensionalidad o ajuste de umbral cuando aplique.
+
+Reporte PDF: Metodología, configuración experimental, resultados comparativos, discusión técnica y decisión provisional.
+
+Repositorio Git: actualizado, ordenado y coherente con el reporte.
+
 
 Debe responder como mínimo:
 
