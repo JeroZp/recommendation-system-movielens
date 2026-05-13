@@ -7,6 +7,7 @@
 ---
 
 ## ❓ Pregunta central
+
 ¿Es posible predecir el rating que un usuario le daría a una película que no ha visto?
 
 ## Stack tecnológico
@@ -25,14 +26,17 @@ recommendation-system-movielens/
 ├── data/
 │     ├── raw/            # Datos originales sin modificar
 │     ├── processed/      # Datos limpios y transformados
-│     └── DATA_CARD.md       # Data Card con detalles del dataset
+│     └── DATA_CARD.md    # Data Card con detalles del dataset
 ├── figures/              # Gráficas exportadas
 ├── notebooks/            # Jupyter Notebooks del proyecto, análisis reproducibles
-│     └── 01_eda_baseline.ipynb
+│     ├── 01_eda_baseline.ipynb
+│     └── 02_comparacion_validacion.ipynb
 ├── poster/               # Póster visual
 ├── report/               # Reportes editables (.md) y definitivos (.pdf)
 │     ├── report_1st_delivery.md
-│     └── report_1st_delivery.pdf
+│     ├── report_1st_delivery.pdf
+│     ├── report_2nd_delivery.md
+│     └── report_2nd_delivery.pdf
 ├── src/                  # Módulos Python (opcional)
 ├── requirements.txt
 └── README.md
@@ -43,12 +47,14 @@ recommendation-system-movielens/
 ## ⚙️ Cómo reproducir el proyecto
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/JeroZp/recommendation-system-movielens.git
 cd recommendation-system-movielens
 ```
 
 ### 2. Crear entorno virtual
+
 ```bash
 python -m venv venv
 ```
@@ -61,11 +67,13 @@ venv\Scripts\Activate.ps1
 ```
 
 **Linux / macOS:**
+
 ```bash
 source venv/bin/activate
 ```
 
 ### 4. Instalar dependencias
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -81,20 +89,14 @@ data/raw/
 ```
 
 ### 6. Ejecutar notebooks
+
 ```bash
 jupyter notebook notebooks/
 ```
 
 ---
 
-## 📌 Notas
-- Asegúrate de tener Python 3.10+ instalado.
-
 ## Troubleshooting
 
-Si scikit-surprise no se instala correctamente, debes instalar Microsoft Visual C++ 14.0 (or greater)
-
-- https://visualstudio.microsoft.com/visual-cpp-build-tools/
-- https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version 
-
-Si scikit-surprise presenta problemas con numpy, vuelve a instalar las dependencias usando el requirements.txt actualizado.
+1. Si scikit-surprise no se instala correctamente, debes instalar Microsoft Visual C++ 14.0 (or greater). https://visualstudio.microsoft.com/visual-cpp-build-tools/
+2. Si scikit-surprise presenta problemas con numpy, vuelve a instalar las dependencias usando el requirements.txt actualizado.
