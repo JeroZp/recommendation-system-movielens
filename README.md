@@ -11,7 +11,7 @@
 
 ## Stack tecnológico
 
-- **Python** > 3.8, < 3.13
+- **Python** >= 3.8, < 3.13.
 - **Data manipulation:** pandas, numpy
 - **ML:** scikit-learn (métricas, baseline, cross-validation, Lasso, Ridge), scikit-surprise (SVD, KNN)
 - **Visualization:** matplotlib, seaborn
@@ -96,3 +96,5 @@ Si scikit-surprise no se instala correctamente, debes instalar Microsoft Visual 
 
 - https://visualstudio.microsoft.com/visual-cpp-build-tools/
 - https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version 
+
+Si scikit-surprise presenta problemas con numpy, vuelve a instalar las dependencias usando el requirements.txt actualizado.
