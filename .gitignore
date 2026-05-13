@@ -1,5 +1,6 @@
 # Entorno virtual
 venv/
+.venv/
 
 # Datos pesados
 data/raw/*.zip
@@ -16,3 +17,4 @@ Thumbs.db
 
 # Datos locales
 .local/
+.vscode/

@@ -11,9 +11,9 @@
 
 ## Stack tecnológico
 
-- **Python** 3.8+
+- **Python** > 3.8, < 3.13
 - **Data manipulation:** pandas, numpy
-- **ML:** scikit-learn (métricas, baseline, cross-validation)
+- **ML:** scikit-learn (métricas, baseline, cross-validation, Lasso, Ridge), scikit-surprise (SVD, KNN)
 - **Visualization:** matplotlib, seaborn
 - **Reproducible:** Jupyter Notebook
 
@@ -89,3 +89,10 @@ jupyter notebook notebooks/
 
 ## 📌 Notas
 - Asegúrate de tener Python 3.10+ instalado.
+
+## Troubleshooting
+
+Si scikit-surprise no se instala correctamente, debes instalar Microsoft Visual C++ 14.0 (or greater)
+
+- https://visualstudio.microsoft.com/visual-cpp-build-tools/
+- https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version 

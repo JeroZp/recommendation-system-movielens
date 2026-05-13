@@ -3,5 +3,10 @@ numpy==2.4.4
 matplotlib==3.10.8
 seaborn==0.13.2
 scikit-learn==1.8.0
+scikit-surprise==1.1.4
 scipy==1.17.1
 jupyter==1.1.1
+
+# Microsoft Visual C++ 14.0 or greater is required
+# - https://visualstudio.microsoft.com/visual-cpp-build-tools/
+# - https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version 
