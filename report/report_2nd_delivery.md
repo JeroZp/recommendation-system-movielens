@@ -6,153 +6,129 @@
 **Curso:** Aprendizaje de Máquina Aplicado  
 **Profesor:** Marco Teran  
 **Fecha límite:** 14/05/2026  
-**Dataset:** MovieLens 100K — GroupLens Research
-**Integrantes:** 
-  - Jerónimo Pérez Baquero (jperezb5@eafit.edu.co)
-  - David Grisales Posada (dgrisalesp@eafit.edu.co)
-  - Esteban Vergara Giraldo (evergarag@eafit.edu.co)
+**Dataset:** MovieLens 100K — GroupLens Research  
+**Integrantes:**
+- Jerónimo Pérez Baquero (jperezb5@eafit.edu.co)
+- David Grisales Posada (dgrisalesp@eafit.edu.co)
+- Esteban Vergara Giraldo (evergarag@eafit.edu.co)
 
 ---
 
 ## Tabla de Contenidos
 
-...
-
-## (draft, borrar esto) Contenidos Mínimos
-
-Jupyter Notebook: pipelines de entrenamiento y evaluación para al menos 2 o 3 familias de modelos.
-
-Validación: división correcta de datos y validación adecuada al tipo de problema (holdout, validación cruzada, validación temporal, etc.).
-
-Análisis: Comparación de métricas, análisis de errores, desbalance, selección de features, reducción de dimensionalidad o ajuste de umbral cuando aplique.
-
-Reporte PDF: Metodología, configuración experimental, resultados comparativos, discusión técnica y decisión provisional.
-
-Repositorio Git: actualizado, ordenado y coherente con el reporte.
-
-
-Debe responder como mínimo:
-
-- ¿Qué modelos se compararon y por qué?
-- ¿Cómo se evitó el data leakage?
-- ¿Cuál familia parece más prometedora?
-- ¿Qué limitaciones siguen abiertas?
-
-## (draft, borrar esto) AI Slop sobre los modelos
-
-¡Excelente selección! Con **SVD, KNN y Lasso**, cubres los tres pilares fundamentales de los sistemas de recomendación:
-
-1. **SVD (Factores Latentes):** Es el "caja negra" que encuentra patrones ocultos en las calificaciones, pero no sabe *qué* es una película de acción o *quién* es un técnico de 24 años.
-2. **KNN (Vecindad):** Es el modelo "social". Busca personas similares a ti. Es muy fácil de explicar ("Te recomendamos esto porque a tu vecino le gustó").
-3. **Lasso (Regresión con Metadatos):** Es el modelo "basado en contenido". Aquí es donde le sacamos jugo a los archivos `Users` y `Movies`.
-
-Para avanzar, lo primero que debemos hacer es construir la **"Gran Tabla Maestra"** para Lasso, porque a diferencia de SVD y KNN (que solo necesitan los IDs y el rating), Lasso necesita que cada fila sea un vector de características.
-
-Aquí tienes el plan de acción para el preprocesamiento de esta tabla:
-
-### 1. Construcción de la Tabla para Lasso
-
-Debes hacer un `merge` de los tres archivos. Cada fila del conjunto de `Ratings` se debe enriquecer con la información del usuario y de la película.
-
-```python
-# Ejemplo lógico del merge
-df_total = ratings.merge(users, on='user_id').merge(movies, on='item_id')
-
-```
-
-### 2. Definición del Preprocesamiento (Aplicando tus reglas)
-
-Como ya tienes las columnas, así es como debes configurar tu `ColumnTransformer` para que Lasso funcione correctamente:
-
-* **A Escalar (`StandardScaler`):**
-* `age`: Es la única numérica continua pura. Si no la escalas, su magnitud (ej. 50 años) pesará mucho más que un 1 en género.
-
-
-* **A Transformar a Binario (`OneHotEncoder`) y NO escalar:**
-* `gender`: (M, F) -> Se vuelve (0, 1).
-* `occupation`: (technician, writer, etc.) -> Se crean múltiples columnas de ceros y unos.
-
-
-* **A dejar pasar intacto (`passthrough`):**
-* **Géneros de películas:** ¡Esta es la mina de oro! En MovieLens 100k, columnas como `Action`, `Adventure`, `Romance`, etc., ya vienen como **0 y 1**. Como ya son binarias, no las toques, solo déjalas pasar.
-
-
-* **A Eliminar (Drop):**
-* `user_id`, `item_id`: Para la regresión no sirven como números (Lasso pensaría que el usuario 200 es "mayor" que el 100).
-* `zip_code`: Demasiada variedad, crea ruido.
-* `timestamp`: A menos que quieras hacer análisis temporal, mejor fuera.
-* `title`, `imdb_url`, `release_date`: No son numéricos directamente procesables.
-
-
-
-### 3. El reto de SVD y KNN (Librería Surprise)
-
-Para estos dos, el preprocesamiento es mínimo, pero la estructura es rígida:
-
-* Debes usar la librería **Surprise**.
-* No aceptan la edad ni los géneros (en sus versiones básicas).
-* Solo aceptan el DataFrame con el orden: `[user_id, item_id, rating]`.
+1. [Pregunta central](#1-pregunta-central)
+2. [Modelos comparados y justificación](#2-modelos-comparados-y-justificación)
+3. [Preprocesamiento y prevención de data leakage](#3-preprocesamiento-y-prevención-de-data-leakage)
+4. [Validación](#4-validación)
+5. [Resultados comparativos](#5-resultados-comparativos)
+6. [Análisis e interpretación](#6-análisis-e-interpretación)
+7. [Familia más prometedora](#7-familia-más-prometedora)
+8. [Limitaciones abiertas](#8-limitaciones-abiertas)
 
 ---
 
-### ¿Por qué esta comparación es tan interesante para tu trabajo?
+## 1. Pregunta central
 
-Cuando compares los resultados (usando RMSE o MAE), verás algo muy común:
-
-* **SVD** suele ganar en precisión pura.
-* **Lasso** suele ser mejor cuando el usuario es nuevo (Cold Start), porque aunque no tengamos sus calificaciones previas, sabemos su **edad** y **ocupación**, y sabemos los **géneros** de las películas.
-
-**¿Te gustaría que te ayude a escribir el código para fusionar las tablas y dejar listo el `ColumnTransformer` específico para este dataset de MovieLens?**
+¿Es posible predecir el rating (1–5) que un usuario le daría a una película que no ha visto? ¿Cuál familia de modelos lo hace mejor con el dataset MovieLens 100K?
 
 ---
 
-La respuesta corta es: **Sí, los tres pueden responder exactamente esa pregunta.**
+## 2. Modelos comparados y justificación
 
-Ese es el corazón de un sistema de recomendación: la **predicción de ratings**. Aunque el objetivo final suele ser dar una "lista de top 10", matemáticamente lo que hacen por debajo es calcular ese numerito (ej. **3.8** o **4.2**) para cada combinación de usuario y película que aún no existe en tu base de datos.
+Se seleccionaron tres familias de modelos que representan enfoques fundamentalmente distintos para el problema de recomendación:
 
-Aquí te explico cómo "razona" cada modelo para darte ese score de **1 a 5**:
+**SVD (Singular Value Decomposition) — Factores Latentes:** Descompone la matriz usuario-película en factores latentes que capturan patrones abstractos de gusto (por ejemplo, preferencia por cierto tipo de cine independientemente de la etiqueta de género). Es el estándar del estado del arte en sistemas de recomendación colaborativos.
 
-### 1. SVD (Singular Value Decomposition)
+**KNN (K-Nearest Neighbors) — Filtrado Colaborativo:** Predice el rating de un ítem buscando los *k* ítems más similares (en esta implementación, item-based con similitud coseno). Es altamente interpretable: recomienda algo porque ítems parecidos recibieron calificaciones similares.
 
-* **Cómo responde:** SVD descompone la matriz de calificaciones en "factores latentes" (características ocultas).
-* **Su lógica:** "El usuario 196 tiene un gusto del **80%** por el drama y **10%** por la acción. La película 242 es **90%** drama. Al multiplicar esos perfiles matemáticamente, el resultado es **4.2**".
-* **Resultado:** Te da un número decimal continuo. Es muy preciso pero no te puede explicar *por qué* llegó a ese número (es una caja negra de álgebra lineal).
+**Lasso y Ridge (Regresión Lineal Regularizada) — Modelos Basados en Contenido:** Predicen el rating como una función lineal de los metadatos del usuario (edad, género, ocupación) y de la película (géneros, año). Permiten identificar qué variables demográficas y de contenido tienen mayor peso predictivo, y sirven como punto de comparación para cuantificar el valor del historial de interacciones frente a los datos de perfil.
 
-### 2. KNN (K-Nearest Neighbors)
-
-* **Cómo responde:** Se basa en la similitud directa, ya sea de personas o de películas.
-* **Su lógica:** "Para saber qué nota le pondrá Juan a *Toy Story*, busco a los 20 usuarios más parecidos a Juan. Veo qué nota le pusieron ellos a esa película y saco un promedio ponderado. Si a sus 'clones' les gustó, a él le daré un **4.5**".
-* **Resultado:** Es un promedio, por lo que siempre obtendrás valores con decimales. Es el modelo más "humano" de entender.
-
-### 3. Lasso (Regresión Lineal con Penalización)
-
-* **Cómo responde:** Trata el rating como una variable dependiente de las características (edad, género, ocupación, género de la película).
-* **Su lógica:** "He aprendido que ser **estudiante** suma **+0.5** a las películas de **comedia**, pero tener **más de 40 años** resta **-0.2**. Al sumar todas las etiquetas de este usuario y esta película, el score final es **3.7**".
-* **Resultado:** Al ser una ecuación de regresión $\hat{y} = \beta_0 + \beta_1 x_1 + \dots$, el resultado es naturalmente un número continuo.
+La combinación de estas tres familias permite contrastar el filtrado colaborativo puro (SVD, KNN) contra el enfoque basado en contenido (Lasso/Ridge), cubriendo los pilares clásicos del área.
 
 ---
 
-### Resumen de comparación para tu entrega
+## 3. Preprocesamiento y prevención de data leakage
 
-| Característica | SVD | KNN | Lasso |
-| --- | --- | --- | --- |
-| **¿Predice 1-5?** | Sí | Sí | Sí |
-| **¿Usa la Edad/Ocupación?** | No (solo IDs) | No (solo IDs) | **Sí** |
-| **¿Usa los Géneros (Acción, etc.)?** | No | No | **Sí** |
-| **Punto fuerte** | Precisión matemática | Simplicidad / Intuición | Explica qué variables importan |
+### Construcción de la tabla maestra
 
-> **Nota importante:** En los tres casos, los modelos pueden predecir valores fuera del rango (ej. **5.2** o **0.8**). Como parte de tu preprocesamiento o post-procesamiento, simplemente se aplica un "clip" para que cualquier valor mayor a **5** sea **5** y menor a **1** sea **1**.
+Para los modelos de regresión se construyó una tabla maestra mediante un merge de los tres archivos del dataset (ratings, users, movies). Cada fila del conjunto de ratings quedó enriquecida con los metadatos del usuario y de la película. SVD y KNN utilizan únicamente la terna [user_id, item_id, rating], según los requerimientos de la librería Surprise.
 
-¿Te gustaría que empezáramos a montar el código para preparar los datos de **Lasso**, que es el que requiere más trabajo de "carpintería" con las columnas?
+### Feature engineering y limpieza
+
+- Se descartaron columnas sin valor predictivo: video_release_date (100% nulos), imdb_url, title, zip_code, timestamp y los IDs como variables numéricas.
+- De release_date se extrajo únicamente el año (release_year), tratado como variable numérica continua. El único valor nulo se imputó con la mediana.
+- Los 19 géneros de las películas se conservaron tal como vienen en el dataset: variables binarias (0/1), sin transformación adicional.
+
+### Transformaciones
+
+Se definió un ColumnTransformer con tratamiento diferenciado por tipo de variable:
+
+- age y release_year: estandarización con StandardScaler.
+- gender y occupation: codificación con OneHotEncoder (sin escalar, ya que son binarias tras la codificación).
+- Géneros de películas: passthrough — ya están en escala binaria y no requieren transformación.
+
+### Prevención de data leakage
+
+El StandardScaler se ajustó (fit) exclusivamente sobre el conjunto de entrenamiento. La misma transformación (parámetros ya fijados) se aplicó con transform a los conjuntos de validación y test. Esto garantiza que ninguna información estadística de los conjuntos de evaluación influyera en el preprocesamiento. Adicionalmente, se fijó una semilla aleatoria global (FIXED_RANDOM_SEED = 42) en todas las operaciones de división y entrenamiento para asegurar reproducibilidad.
 
 ---
 
-### ¿Lasso o Ridge? La batalla de la regularización
+## 4. Validación
 
-La diferencia principal radica en qué hacen con las variables que "no sirven":
+Se adoptó una partición **holdout en tres conjuntos**: 60% entrenamiento, 20% validación y 20% test. La partición se realizó de forma aleatoria estratificada mediante train_test_split con semilla fija. La validación cruzada de 3 pliegues (cv=3) se utilizó exclusivamente dentro del conjunto de entrenamiento para la búsqueda de hiperparámetros (GridSearchCV), evitando que los datos de validación y test participaran en la selección de parámetros.
 
-* **Lasso ($L_1$):** Es un seleccionador de variables. Si una ocupación (ej. `librarian`) no influye en absoluto en la nota de las películas de acción, Lasso pondrá su coeficiente exactamente en **cero**. Esto te deja un modelo mucho más limpio e interpretable.
-* **Ridge ($L_2$):** Es un "suavizador". Reduce la importancia de las variables, pero nunca las hace cero. Mantiene todas las variables vivas, solo que con pesos muy pequeños.
+Esta estrategia garantiza que las métricas reportadas en el test reflejen el desempeño real sobre datos no vistos en ningún momento del proceso de modelado.
 
-**¿Por qué Lasso es mejor para este caso?**
-Tienes 19 géneros de películas y unas 21 ocupaciones. Es muy probable que muchas combinaciones sean puro ruido. Lasso "limpiará" el ruido por ti, permitiéndote decir: *"Para este usuario, el género Terror no afecta en nada a su predicción"*.
+---
+
+## 5. Resultados comparativos
+
+El baseline de referencia consiste en predecir siempre el promedio global del conjunto de entrenamiento ($\hat{y} = 3.53$), con un RMSE de **1.1253** en test.
+
+| Modelo   | RMSE (Test) | Mejora vs. Baseline |
+|----------|------------|---------------------|
+| SVD      | **0.9214** | 18.1%              |
+| KNN      | 0.9464     | 15.9%              |
+| Ridge    | 1.0978     | 2.4%               |
+| Lasso    | 1.0986     | 2.4%               |
+| Baseline | 1.1253     | —                   |
+
+Los hiperparámetros óptimos se obtuvieron mediante búsqueda en grilla:
+- **Lasso**: alpha = 0.001
+- **Ridge**: alpha = 10.0
+- **KNN**: item-based, similitud coseno, k = 80, min_k = 1
+- **SVD**: n_factors = 150, n_epochs = 30, lr_all = 0.01, reg_all = 0.1
+
+---
+
+## 6. Análisis e interpretación
+
+**SVD y KNN superan ampliamente a los modelos lineales.** Ambos operan sobre la matriz de interacciones, lo que les permite capturar patrones de gusto individual que no están escritos en el perfil demográfico. SVD, en particular, puede detectar afinidades latentes (por ejemplo, preferencia por cierto estilo narrativo) sin que esa categoría exista explícitamente en los datos.
+
+**Lasso y Ridge apenas superan el baseline.** El motivo es la llamada *content-only limitation*: dos usuarios con idénticos metadatos (misma edad, género y ocupación) pueden tener gustos radicalmente distintos. Los modelos lineales no tienen acceso al historial de interacciones, por lo que asignan predicciones similares a perfiles similares, ignorando la variabilidad individual real.
+
+**Ridge supera ligeramente a Lasso** (1.0978 vs. 1.0986). En datasets de tamaño moderado como MovieLens 100K, la penalización $$L_2$$ de Ridge resulta más adecuada que la eliminación agresiva de variables de Lasso: mantener señales pequeñas de múltiples variables demográficas aporta más que descartarlas.
+
+**Análisis de coeficientes Lasso:** Las variables que sobrevivieron a la penalización (coeficiente ≠ 0) revelan que los géneros de la película tienen mayor peso predictivo que las variables demográficas del usuario, lo que confirma que el contenido de la película es más determinante que el perfil del espectador para los modelos lineales.
+
+---
+
+## 7. Familia más prometedora
+
+El **filtrado colaborativo basado en factores latentes (SVD)** se posiciona como la familia más prometedora, con un RMSE de 0.9214 — una mejora del 18% sobre el baseline. Su capacidad de capturar preferencias individuales a partir del historial de interacciones, sin depender de metadatos externos, lo convierte en la opción más robusta para este problema.
+
+KNN representa una alternativa interpretable con desempeño competitivo (RMSE 0.9464), aunque con mayor costo computacional en producción. Los modelos lineales son útiles para analizar qué variables influyen en los ratings, pero no son candidatos principales para la recomendación final.
+
+---
+
+## 8. Limitaciones abiertas
+
+**Cold start:** SVD y KNN dependen del historial de interacciones. Para usuarios nuevos o películas con pocas calificaciones, su desempeño se degrada. Los modelos lineales (Lasso/Ridge) son más robustos en este escenario, ya que pueden hacer predicciones a partir del perfil demográfico incluso sin historial.
+
+**Sesgo demográfico del dataset:** Aproximadamente el 75% de los usuarios son hombres, con una mediana de edad de 31 años y una ocupación predominantemente estudiantil. El modelo aprende principalmente de este perfil, lo que limita su generalización a otros grupos.
+
+**Sesgo temporal:** La mayoría de los ratings corresponden a películas de los años 90. El modelo puede subestimar películas de otras épocas con menor densidad de calificaciones.
+
+**Sparsity:** La matriz usuario-película tiene una sparsity del 93.7%. Zonas de la matriz con muy pocas interacciones (usuarios o películas con pocos ratings) son inherentemente más difíciles de predecir, independientemente del modelo utilizado.
+
+**Hiperparámetros de SVD:** La búsqueda en grilla realizada cubre un subespacio limitado de configuraciones. Una búsqueda más exhaustiva (Optuna, Bayesian optimization) podría mejorar adicionalmente el RMSE.
