@@ -1,7 +1,8 @@
 # Entorno virtual
 venv/
 .venv/
-
+venv3.11/
+.venv3.11/
 # Datos pesados
 data/raw/*.zip
 data/raw/ml-100k/
